@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'strawberry_publisher'
+package_name = 'strawberry_publisher_pkg'
 
 setup(
     name=package_name,
@@ -11,14 +11,14 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='Your Name',
+    maintainer='lko',
     maintainer_email='lko991111@gmail.com',
     description='딸기 위치 퍼블리셔',
     license='MIT',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'strawberry_pub = strawberry_publisher.publisher_node:main',
+            'strawberry_pub = strawberry_publisher_pkg.publisher_node:main',
         ],
     },
 )
