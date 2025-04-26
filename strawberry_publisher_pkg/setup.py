@@ -18,7 +18,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'strawberry_publisher = strawberry_publisher_pkg.publisher_node:main',
+            'strawberry_publisher = strawberry_publisher_pkg.strawberry_publisher:main',
         ],
     },
 )
