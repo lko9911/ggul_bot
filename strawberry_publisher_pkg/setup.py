@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'strawberry_publisher'
+package_name = 'strawberry_publisher_pkg'
 
 setup(
     name=package_name,
@@ -18,7 +18,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'strawberry_pub = strawberry_publisher.publisher_node:main',
+            'strawberry_publisher = strawberry_publisher_pkg.strawberry_publisher:main',
         ],
     },
 )
