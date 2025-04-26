@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="3">
-  <name>strawberry_publisher</name>
+  <name>strawberry_publisher_pkg</name>
   <version>0.1.0</version>
   <description>YOLO 딸기 위치 퍼블리셔</description>
   <maintainer email="you@example.com">Your Name</maintainer>
