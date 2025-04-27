@@ -7,8 +7,9 @@ setup(
     version='0.1.0',
     packages=find_packages(),
     data_files=[
+        ('share/ament_index/resource_index/packages',
+            ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        ('lib/python3/dist-packages/' + package_name, []),  # 패키지 인덱스에 마커 추가
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -19,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'strawberry_publisher = strawberry_publisher_pkg.strawberry_publisher_pkg.strawberry_publisher:main',
+            'strawberry_publisher = strawberry_publisher_pkg.strawberry_publisher:main',
         ],
     },
 )
