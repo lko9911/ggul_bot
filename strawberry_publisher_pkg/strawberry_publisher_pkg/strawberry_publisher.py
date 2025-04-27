@@ -3,8 +3,8 @@ from rclpy.node import Node
 from std_msgs.msg import String
 import json
 
-from Strawberry_Vision import detect_and_save
-from utils import load_detected_objects
+from strawberry_publisher_pkg.Strawberry_Vision import detect_and_save
+from strawberry_publisher_pkg.utils import load_detected_objects
 
 class StrawberryPublisher(Node):
     def __init__(self):
