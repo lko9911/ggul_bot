@@ -1,0 +1,5 @@
+setuptools
+opencv-python
+ultralytics
+tensorflow
+numpy==1.23.5
