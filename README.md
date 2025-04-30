@@ -10,6 +10,8 @@ UDRF 참조 경로 수정 (상대경로에서 절대경로로)<br><br>
 
 ## 🥈 Strawberry_publisher_pkg 제작 <br>
 - git clone 방법 동일, 이후 아래코드 실행해서 라이브러리 설치
+<pre><code>git clone https://github.com/lko9911/ggul_bot.git</code></pre>
+<pre><code>colcon build; source install/setup.bash</code></pre>
 <pre><code>cd /ros2_ws2/ggul_bot/strawberry_publisher_pkg/strawberry_publisher_pkg/
 pip3 install -r requirements.txt </code></pre>
 - pip 설치 코드
