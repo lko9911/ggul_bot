@@ -1,11 +1,19 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
+from ament_index_python.packages import get_package_share_directory
+import os
+import yaml
 
 def generate_launch_description():
-    with open('/home/kkm/ws_moveit/src/ggul_bot_v6_config/config/ggul_bot_v6.urdf', 'r') as urdf_file:
+    pkg_path = get_package_share_directory('ggul_bot_v6_config')
+
+    urdf_path = os.path.join(pkg_path, 'config', 'ggul_bot_v6.urdf')
+    kin_path = os.path.join(pkg_path, 'config', 'kinematics.yaml')
+
+    with open(urdf_path, 'r') as urdf_file:
         robot_description = urdf_file.read()
-    with open('/home/kkm/ws_moveit/src/ggul_bot_v6_config/config/kinematics.yaml', 'r') as kin_file:
-        import yaml
+
+    with open(kin_path, 'r') as kin_file:
         robot_description_kinematics = yaml.safe_load(kin_file)
 
     return LaunchDescription([
@@ -21,3 +29,4 @@ def generate_launch_description():
         )
     ])
 
+# urdf 파일 경로 수정(하드코딩 x)
