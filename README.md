@@ -2,6 +2,10 @@
 
 ## 🥇 변동 사항
 
+0. ggul_bot_v7_config
+ggul_bot_v7_config 추가<br>
+v6 -> v7 으로 변경
+
 1. CMakeLists.txt <br>
 install(FILES .setup_assistant DESTINATION share/${PROJECT_NAME}) 주석 처리 (assistant 파일을 프로그램이 못 찾음)<br><br>
 
