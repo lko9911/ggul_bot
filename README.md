@@ -20,7 +20,8 @@ UDRF 참조 경로 수정 (상대경로에서 절대경로로)<br><br>
 <pre><code>pip install websockets</code></pre>
 - 패키지 사용
 <pre><code>ros2 run websocket_pkg ws_to_ros_publisher</code></pre>
-<br>
+- vs code랑 연동하는 방법<br>
+https://github.com/lko9911/RaspberryPi5-websocket
 
 ## 🥈 Strawberry_publisher_pkg 제작 <br>
 - git clone 방법 동일, 이후 아래코드 실행해서 라이브러리 설치
