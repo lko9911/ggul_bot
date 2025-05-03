@@ -16,12 +16,14 @@ UDRF 참조 경로 수정 (상대경로에서 절대경로로)<br>
 3. websocket_pkg, Strawberry_publisher_pkg 패키지 추가
 <br><br>
 ## 🥈 websocket 제작 (라즈베리파이5 or 개인 노트북 → ros 터미널) <br>
+- 클론 하기전 꼭 ik_ws_publisher.py의 ipv4 주소를 자신의 노트북이나 라즈베리파이 ip 주소로 바꿀 것 ! (url = ip주소:포트번호) 
 - git clone 방법 동일, 이후 아래코드 실행해서 라이브러리 설치
 <pre><code>git clone <꿀봇 저장소 URL></code></pre>
 <pre><code>colcon build; source install/setup.bash</code></pre>
 <pre><code>pip install websockets</code></pre>
 - 패키지 사용
 <pre><code>ros2 run websocket_pkg ws_to_ros_publisher</code></pre>
+<pre><code>ros2 run websocket_pkg ik_ws_publisher</code></pre>
 - vs code랑 연동하는 방법<br>
 https://github.com/lko9911/RaspberryPi5-websocket<br><br>
 
