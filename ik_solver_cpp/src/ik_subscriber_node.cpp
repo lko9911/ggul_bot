@@ -7,13 +7,18 @@
 #include <moveit/robot_model/robot_model.h>
 #include <moveit/robot_state/robot_state.h>
 
-class IKSubscriber : public rclcpp::Node
+#include <memory>  // std::enable_shared_from_this
+
+class IKSubscriber : public rclcpp::Node, public std::enable_shared_from_this<IKSubscriber>
 {
 public:
     IKSubscriber() : Node("ik_subscriber_node")
     {
-        // 로봇 모델 로더 초기화 (shared_ptr 없이 직접 초기화)
-        robot_model_loader_ = std::make_shared<robot_model_loader::RobotModelLoader>("robot_description");
+        // 현재 노드의 shared_ptr을 얻기
+        auto node = shared_from_this();
+
+        // RobotModelLoader 초기화 (노드 전달 필요)
+        robot_model_loader_ = std::make_shared<robot_model_loader::RobotModelLoader>(node);
         robot_model_ = robot_model_loader_->getModel();
         robot_state_ = std::make_shared<moveit::core::RobotState>(robot_model_);
         planning_group_ = "manipulator2";
@@ -87,8 +92,11 @@ private:
 int main(int argc, char** argv)
 {
     rclcpp::init(argc, argv);
+
+    // 반드시 shared_ptr로 생성 (enable_shared_from_this를 위해)
     auto node = std::make_shared<IKSubscriber>();
     rclcpp::spin(node);
+
     rclcpp::shutdown();
     return 0;
 }
