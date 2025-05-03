@@ -12,8 +12,8 @@ class IKSubscriber : public rclcpp::Node
 public:
     IKSubscriber() : Node("ik_subscriber_node")
     {
-        // 로봇 모델 로더 초기화
-        robot_model_loader_ = std::make_shared<robot_model_loader::RobotModelLoader>(this->shared_from_this(), "robot_description");
+        // 로봇 모델 로더 초기화 (shared_ptr 없이 직접 초기화)
+        robot_model_loader_ = std::make_shared<robot_model_loader::RobotModelLoader>("robot_description");
         robot_model_ = robot_model_loader_->getModel();
         robot_state_ = std::make_shared<moveit::core::RobotState>(robot_model_);
         planning_group_ = "manipulator2";
@@ -92,5 +92,6 @@ int main(int argc, char** argv)
     rclcpp::shutdown();
     return 0;
 }
+
 
 
