@@ -1,6 +1,6 @@
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import Pose
+from geometry_msgs.msg import Point
 import asyncio
 import websockets
 import json
@@ -8,35 +8,38 @@ import json
 class WebSocketToROSPublisher(Node):
     def __init__(self):
         super().__init__('websocket_ros_publisher')
-        self.publisher_ = self.create_publisher(Pose, '/target_pose', 10)
+        self.publisher_ = self.create_publisher(Point, 'ik_goal', 10)
         self.get_logger().info("✅ WebSocket ROS Publisher Node Started")
+        # 웹소켓 메시지를 저장할 변수 초기화
+        self.received_message = None
 
     async def echo_and_publish(self, websocket):
         async for message in websocket:
             self.get_logger().info(f"📩 Received: {message}")
             try:
+                # 메시지를 파싱하여 Point 메시지로 변환
                 data = json.loads(message)
-
-                # Pose 메시지 생성
-                msg = Pose()
-                msg.position.x = data['X']
-                msg.position.y = data['Y']
-                msg.position.z = data['Z']
+                msg = Point()
+                msg.x = data['X']
+                msg.y = data['Y']
+                msg.z = data['Z']
                 
-                # 방향 정보는 기본값(회전 없음)
-                msg.orientation.x = 0.0
-                msg.orientation.y = 0.0
-                msg.orientation.z = 0.0
-                msg.orientation.w = 1.0  # 회전하지 않음을 의미 (단위 쿼터니언)
+                # 변환된 메시지를 변수에 저장
+                self.received_message = msg
+                self.get_logger().info(f"📤 Published: {msg}")
 
-                # Pose 메시지 발행
+                # ROS 토픽으로 퍼블리시
                 self.publisher_.publish(msg)
-                self.get_logger().info(f"📤 Published Pose: {msg}")
-                await websocket.send("✅ Received and published Pose to /target_pose")
-
+                
+                # 웹소켓 클라이언트에 응답
+                await websocket.send("✅ Received and published")
             except Exception as e:
                 self.get_logger().error(f"❌ Error: {e}")
                 await websocket.send("❌ Failed to parse message")
+
+    def get_received_message(self):
+        """받은 메시지를 반환하는 함수"""
+        return self.received_message
 
 async def main_async():
     rclpy.init()
