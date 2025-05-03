@@ -1,6 +1,7 @@
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import Point
+from geometry_msgs.msg import Pose
+from sensor_msgs.msg import JointState
 import asyncio
 import websockets
 import json
@@ -8,38 +9,44 @@ import json
 class WebSocketToROSPublisher(Node):
     def __init__(self):
         super().__init__('websocket_ros_publisher')
-        self.publisher_ = self.create_publisher(Point, 'ik_goal', 10)
+
+        # WebSocket으로 받은 Pose 메시지 퍼블리셔
+        self.pose_publisher = self.create_publisher(Pose, '/target_pose', 10)
+
+        # JointState 구독자 추가
+        self.joint_state_subscriber = self.create_subscription(
+            JointState,
+            '/joint_states',
+            self.joint_state_callback,
+            10
+        )
+
         self.get_logger().info("✅ WebSocket ROS Publisher Node Started")
-        # 웹소켓 메시지를 저장할 변수 초기화
-        self.received_message = None
 
     async def echo_and_publish(self, websocket):
         async for message in websocket:
             self.get_logger().info(f"📩 Received: {message}")
             try:
-                # 메시지를 파싱하여 Point 메시지로 변환
+                # JSON → Pose 메시지로 변환
                 data = json.loads(message)
-                msg = Point()
-                msg.x = data['X']
-                msg.y = data['Y']
-                msg.z = data['Z']
-                
-                # 변환된 메시지를 변수에 저장
-                self.received_message = msg
-                self.get_logger().info(f"📤 Published: {msg}")
+                pose_msg = Pose()
+                pose_msg.position.x = data['X']
+                pose_msg.position.y = data['Y']
+                pose_msg.position.z = data['Z']
+                # Orientation은 기본값(0)으로 둡니다.
+                pose_msg.orientation.w = 1.0  # 단위 쿼터니언
 
-                # ROS 토픽으로 퍼블리시
-                self.publisher_.publish(msg)
-                
-                # 웹소켓 클라이언트에 응답
-                await websocket.send("✅ Received and published")
+                self.pose_publisher.publish(pose_msg)
+                self.get_logger().info(f"📤 Published Pose: {pose_msg.position}")
+
+                await websocket.send("✅ Pose published")
             except Exception as e:
                 self.get_logger().error(f"❌ Error: {e}")
                 await websocket.send("❌ Failed to parse message")
 
-    def get_received_message(self):
-        """받은 메시지를 반환하는 함수"""
-        return self.received_message
+    def joint_state_callback(self, msg: JointState):
+        self.get_logger().info(f"🔧 Received JointState with {len(msg.name)} joints")
+        # 필요한 경우 데이터를 활용할 수 있도록 저장하거나 처리
 
 async def main_async():
     rclpy.init()
