@@ -16,7 +16,7 @@ public:
         robot_model_ = robot_model_loader_->getModel();
         robot_state_ = std::make_shared<moveit::core::RobotState>(robot_model_);
 
-        planning_group_ = "manipulator2";  
+        planning_group_ = "manipulator7";  
         joint_model_group_ = robot_model_->getJointModelGroup(planning_group_);
 
         pose_sub_ = node_->create_subscription<geometry_msgs::msg::Pose>(
