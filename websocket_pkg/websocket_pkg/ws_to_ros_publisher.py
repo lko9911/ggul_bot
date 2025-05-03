@@ -1,40 +1,37 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
+from geometry_msgs.msg import Point
 import asyncio
 import websockets
+import json
 
-class WebSocketROSNode(Node):
+class WebSocketToROSPublisher(Node):
     def __init__(self):
         super().__init__('websocket_ros_publisher')
-        self.publisher_ = self.create_publisher(String, 'websocket_topic', 10)
-        self.get_logger().info("✅ ROS 2 WebSocket Publisher Node Started")
+        self.publisher_ = self.create_publisher(Point, 'ik_goal', 10)
+        self.get_logger().info("✅ WebSocket ROS Publisher Node Started")
 
-    async def echo(self, websocket):
+    async def echo_and_publish(self, websocket):
         async for message in websocket:
-            self.get_logger().info(f"🌐 WebSocket 수신 메시지: {message}")
-            
-            # ROS2 토픽으로 publish
-            msg = String()
-            msg.data = message
-            self.publisher_.publish(msg)
-            self.get_logger().info(f"📤 ROS2 토픽 발행: {message}")
-
-            await websocket.send(f"서버에서 수신 완료: {message}")
+            self.get_logger().info(f"📩 Received: {message}")
+            try:
+                data = json.loads(message)
+                msg = Point()
+                msg.x = data['X']
+                msg.y = data['Y']
+                msg.z = data['Z']
+                self.publisher_.publish(msg)
+                await websocket.send("✅ Received and published")
+            except Exception as e:
+                self.get_logger().error(f"❌ Error: {e}")
+                await websocket.send("❌ Failed to parse message")
 
 async def main_async():
     rclpy.init()
-    node = WebSocketROSNode()
-
-    # asyncio task를 rclpy와 함께 유지
-    loop = asyncio.get_running_loop()
-    loop.create_task(websockets.serve(node.echo, "0.0.0.0", 8765))
-
-    try:
-        rclpy.spin(node)
-    finally:
-        node.destroy_node()
-        rclpy.shutdown()
+    node = WebSocketToROSPublisher()
+    start_server = websockets.serve(node.echo_and_publish, "0.0.0.0", 8765)
+    async with start_server:
+        await asyncio.Future()  # run forever
 
 def main():
     asyncio.run(main_async())
