@@ -5,9 +5,9 @@ import os
 import yaml
 
 def generate_launch_description():
-    pkg_path = get_package_share_directory('ggul_bot_v6_config')
+    pkg_path = get_package_share_directory('ggul_bot_v7_config')
 
-    urdf_path = os.path.join(pkg_path, 'config', 'ggul_bot_v6.urdf')
+    urdf_path = os.path.join(pkg_path, 'config', 'ggul_bot_v7.urdf')
     kin_path = os.path.join(pkg_path, 'config', 'kinematics.yaml')
 
     with open(urdf_path, 'r') as urdf_file:
@@ -17,6 +17,7 @@ def generate_launch_description():
         robot_description_kinematics = yaml.safe_load(kin_file)
 
     return LaunchDescription([
+        # IK Solver Node
         Node(
             package='ik_solver_cpp',
             executable='ik_subscriber_node',
@@ -26,7 +27,12 @@ def generate_launch_description():
                 {'robot_description': robot_description},
                 {'robot_description_kinematics': robot_description_kinematics}
             ]
+        ),
+        # WebSocket → ROS Publisher Node
+        Node(
+            package='websocket_pkg', 
+            executable='ws_to_ros_publisher',  
+            name='ws_to_ros_publisher',
+            output='screen'
         )
     ])
-
-# urdf 파일 경로 수정(하드코딩 x)
