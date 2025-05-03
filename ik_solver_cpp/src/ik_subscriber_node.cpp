@@ -32,7 +32,7 @@ public:
             std::bind(&IKSubscriber::jointStateCallback, this, std::placeholders::_1));
 
         // WebSocket 클라이언트 설정 (Python 서버와 통신)
-        websocket_endpoint_ = "ws://localhost:8765"; // 웹소켓 서버 주소
+        websocket_endpoint_ = "ws://192.168.150.77:8765"; // 웹소켓 서버 주소
         asio::io_context io_context;
         socket_ = std::make_shared<asio::ip::tcp::socket>(io_context);
         
