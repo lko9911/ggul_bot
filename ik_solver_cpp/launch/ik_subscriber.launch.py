@@ -17,7 +17,6 @@ def generate_launch_description():
         robot_description_kinematics = yaml.safe_load(kin_file)
 
     return LaunchDescription([
-        # IK Solver Node
         Node(
             package='ik_solver_cpp',
             executable='ik_subscriber_node',
@@ -27,12 +26,5 @@ def generate_launch_description():
                 {'robot_description': robot_description},
                 {'robot_description_kinematics': robot_description_kinematics}
             ]
-        ),
-        # WebSocket → ROS Publisher Node
-        Node(
-            package='websocket_pkg', 
-            executable='ws_to_ros_publisher',  
-            name='ws_to_ros_publisher',
-            output='screen'
         )
     ])
