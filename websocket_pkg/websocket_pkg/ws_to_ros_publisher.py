@@ -5,7 +5,6 @@ from sensor_msgs.msg import JointState
 import asyncio
 import websockets
 import json
-import threading
 
 class WebSocketToROSPublisher(Node):
     def __init__(self):
@@ -43,22 +42,25 @@ class WebSocketToROSPublisher(Node):
     def joint_state_callback(self, msg: JointState):
         self.get_logger().info(f"🔧 Received JointState with {len(msg.name)} joints")
 
-def ros_spin_thread(node):
-    rclpy.spin(node)
+async def ros_spin_once(node):
+    executor = rclpy.executors.SingleThreadedExecutor()
+    executor.add_node(node)
+    while rclpy.ok():
+        executor.spin_once(timeout_sec=0.1)
+        await asyncio.sleep(0.01)
 
-async def main_async(node):
-    server = await websockets.serve(node.echo_and_publish, "0.0.0.0", 8765)
-    print("🌐 WebSocket server started on port 8765")
-    await asyncio.Future()
-
-def main():
+async def main_async():
     rclpy.init()
     node = WebSocketToROSPublisher()
 
-    # spin을 별도 스레드에서 실행
-    threading.Thread(target=ros_spin_thread, args=(node,), daemon=True).start()
+    # 웹소켓 서버와 ROS spin을 함께 돌림
+    server = await websockets.serve(node.echo_and_publish, "0.0.0.0", 8765)
+    print("🌐 WebSocket server started on port 8765")
 
-    asyncio.run(main_async(node))
+    await asyncio.gather(
+        ros_spin_once(node),
+        asyncio.Future()  # 웹소켓이 살아 있는 한 무한 대기
+    )
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main_async())
