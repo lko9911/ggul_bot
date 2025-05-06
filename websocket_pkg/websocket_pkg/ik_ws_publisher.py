@@ -22,7 +22,7 @@ class IKWebSocketPublisher(Node):
         asyncio.run(self.send_to_websocket(joint_values))
 
     async def send_to_websocket(self, joint_values):
-        uri = "ws://<IPv4>:8765"
+        uri = "ws://192.168.123.103:8766"
         data = {
             "joint_values": joint_values
         }
